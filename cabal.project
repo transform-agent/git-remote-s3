@@ -1,0 +1,12 @@
+-- cabal.project
+-- Top-level Cabal project file for git-remote-s3 (Haskell translation).
+
+packages: .
+
+-- Use HEAD versions of amazonka from Hackage (released ≥ 2.0).
+-- If building without internet access, point to a local snapshot.
+-- allow-newer: amazonka-core, amazonka, amazonka-s3
+
+-- Optimise only the library (faster builds during development):
+-- package git-remote-s3
+--   optimization: 0
