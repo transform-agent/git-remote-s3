@@ -1,0 +1,59 @@
+name: Clojure Tests
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Test and build with Leiningen
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    defaults:
+      run:
+        working-directory: clojure
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Install Leiningen
+        uses: DeLaGuardo/setup-clojure@12
+        with:
+          lein: latest
+
+      - name: Cache Maven / Lein dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('clojure/project.clj') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run tests
+        run: lein test
+
+      - name: Build remote uberjar
+        run: lein with-profile remote uberjar
+
+      - name: Build lfs uberjar
+        run: lein with-profile lfs uberjar
+
+      - name: Build manage uberjar
+        run: lein with-profile manage uberjar

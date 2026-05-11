@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-FileCopyrightText: 2023-present Amazon.com, Inc. or its affiliates
+  SPDX-License-Identifier: Apache-2.0
+
+  Log4j2 configuration for git-remote-s3 Clojure port.
+
+  By default only ERROR-level messages reach stderr, matching the Python
+  implementation's `logging.ERROR` default.  Verbosity can be raised at
+  runtime (e.g. via the "option verbosity 2" git protocol command, or the
+  GIT_REMOTE_S3_VERBOSE=1 environment variable).
+-->
+<Configuration status="WARN" monitorInterval="0">
+
+  <Appenders>
+
+    <!-- Console appender writes to System.err (same as Python logging stream) -->
+    <Console name="Stderr" target="SYSTEM_ERR">
+      <PatternLayout pattern="%(logger)s: %(level)s: %(message)s%n"/>
+    </Console>
+
+    <!-- Optional file appender for LFS agent log (mirrors Python .git/lfs/tmp path) -->
+    <RollingFile name="LfsFile"
+                 fileName=".git/lfs/tmp/git-lfs-s3.log"
+                 filePattern=".git/lfs/tmp/git-lfs-s3-%d{yyyy-MM-dd}.log">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} - %level - %pid - %msg%n"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy/>
+      </Policies>
+    </RollingFile>
+
+  </Appenders>
+
+  <Loggers>
+
+    <!-- Root logger: ERROR by default (can be raised to INFO via cmd-option) -->
+    <Root level="ERROR">
+      <AppenderRef ref="Stderr"/>
+    </Root>
+
+    <!-- LFS namespace logs to file at ERROR level by default -->
+    <Logger name="git-remote-s3.lfs" level="ERROR" additivity="false">
+      <AppenderRef ref="LfsFile"/>
+    </Logger>
+
+  </Loggers>
+
+</Configuration>

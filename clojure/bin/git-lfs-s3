@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2023-present Amazon.com, Inc. or its affiliates
+# SPDX-License-Identifier: Apache-2.0
+#
+# git-lfs-s3  –  wrapper that invokes the Clojure uberjar.
+#
+# Installation: copy (or symlink) this file to a directory on your PATH,
+# e.g. /usr/local/bin/git-lfs-s3
+# The JAR must live next to this script, or set GIT_LFS_S3_JAR to its path.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+JAR="${GIT_LFS_S3_JAR:-${SCRIPT_DIR}/git-lfs-s3.jar}"
+
+if [[ ! -f "$JAR" ]]; then
+  echo "git-lfs-s3: JAR not found at $JAR" >&2
+  echo "Build it with:  cd clojure && lein with-profile lfs uberjar" >&2
+  exit 1
+fi
+
+exec java -jar "$JAR" "$@"
