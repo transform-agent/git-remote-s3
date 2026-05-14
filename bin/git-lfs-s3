@@ -1,0 +1,37 @@
+#!/usr/bin/env php
+<?php
+
+// SPDX-FileCopyrightText: 2023-present Amazon.com, Inc. or its affiliates
+//
+// SPDX-License-Identifier: Apache-2.0
+
+/**
+ * git-lfs-s3
+ *
+ * Git LFS custom-transfer agent that stores large files on Amazon S3.
+ *
+ * Usage:
+ *   git-lfs-s3 [install|debug|enable-debug|disable-debug]
+ *
+ * When invoked without arguments it acts as the LFS transfer agent
+ * (reading JSON events from stdin and writing JSON responses to stdout).
+ */
+
+$autoloadCandidates = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php',
+];
+foreach ($autoloadCandidates as $autoload) {
+    if (file_exists($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+
+while (ob_get_level() > 0) {
+    ob_end_clean();
+}
+ob_implicit_flush(true);
+
+\GitRemoteS3\lfsMain();

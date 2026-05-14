@@ -1,0 +1,39 @@
+#!/usr/bin/env php
+<?php
+
+// SPDX-FileCopyrightText: 2023-present Amazon.com, Inc. or its affiliates
+//
+// SPDX-License-Identifier: Apache-2.0
+
+/**
+ * git-remote-s3 / git-remote-s3+zip
+ *
+ * Git remote helper that stores git bundles on Amazon S3.
+ * Invoked automatically by git when a remote URL starts with s3:// or s3+zip://.
+ *
+ * Usage (git calls this internally):
+ *   git-remote-s3 <name> <url>
+ */
+
+// Support both running from source and from a Composer install.
+$autoloadCandidates = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php',
+];
+foreach ($autoloadCandidates as $autoload) {
+    if (file_exists($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+
+use GitRemoteS3\Remote;
+
+// Disable output buffering — git remote helpers must flush immediately.
+while (ob_get_level() > 0) {
+    ob_end_clean();
+}
+ob_implicit_flush(true);
+
+\GitRemoteS3\main();

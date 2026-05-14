@@ -1,0 +1,32 @@
+#!/usr/bin/env php
+<?php
+
+// SPDX-FileCopyrightText: 2023-present Amazon.com, Inc. or its affiliates
+//
+// SPDX-License-Identifier: Apache-2.0
+
+/**
+ * git-s3
+ *
+ * Management CLI for git-remote-s3 repositories on Amazon S3.
+ *
+ * Usage:
+ *   git-s3 doctor  <remote> [--delete-bundle] [--lock-ttl N] [--delete-stale-locks]
+ *   git-s3 delete-branch <remote> <branch>
+ *   git-s3 protect   <remote> <branch>
+ *   git-s3 unprotect <remote> <branch>
+ */
+
+$autoloadCandidates = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php',
+];
+foreach ($autoloadCandidates as $autoload) {
+    if (file_exists($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+
+\GitRemoteS3\manageMain();
